@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Bất ngờ 💌</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: white;
+      text-align: center;
+    }
+
+    /* Màn QR */
+    #qrScreen {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: #f7f7f7;
+      color: black;
+    }
+    #qrcode {
+      margin: 20px;
+    }
+
+    /* Slideshow nền */
+    .slideshow {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      top: 0; left: 0;
+      z-index: -1;
+    }
+    .slideshow img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      position: absolute;
+      opacity: 0;
+      animation: slide 30s infinite;
+    }
+    .slideshow img:nth-child(1) { animation-delay: 0s; }
+    .slideshow img:nth-child(2) { animation-delay: 10s; }
+    .slideshow img:nth-child(3) { animation-delay: 20s; }
+    @keyframes slide {
+      0% {opacity: 0;}
+      10% {opacity: 1;}
+      30% {opacity: 1;}
+      40% {opacity: 0;}
+      100% {opacity: 0;}
+    }
+
+    /* Popup mật khẩu */
+    #popup {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.8);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: white;
+    }
+    #popup img {
+      max-width: 250px;
+      border-radius: 15px;
+      margin-bottom: 20px;
+    }
+    #passwordBox input {
+      padding: 8px;
+      border-radius: 6px;
+      border: none;
+      outline: none;
+      font-size: 16px;
+    }
+    #passwordBox button {
+      padding: 8px 14px;
+      margin-left: 8px;
+      border: none;
+      border-radius: 6px;
+      background: #ff69b4;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    #message {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
+    /* Trái tim */
+    #heart {
+      display: none;
+      font-size: 100px;
+      color: red;
+      cursor: pointer;
+      animation: beat 1s infinite;
+      text-shadow: 0 0 20px rgba(255,0,0,0.6);
+      margin-top: 100px;
+    }
+    @keyframes beat {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+    }
+
+    /* Lá thư */
+    #letter {
+      display: none;
+      background: white;
+      color: black;
+      padding: 20px;
+      border-radius: 12px;
+      max-width: 600px;
+      margin: 40px auto;
+      font-size: 18px;
+      line-height: 1.6;
+      text-align: left;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    }
+  </style>
+</head>
+<body>
+  <!-- Màn hình QR -->
+  <div id="qrScreen">
+    <h2>Quét mã QR để nhận bất ngờ 💌</h2>
+    <div id="qrcode"></div>
+  </div>
+
+  <!-- Trang bí mật -->
+  <div id="secretScreen" style="display:none;">
+    <div class="slideshow">
+      <img src="anh1.jpg">
+      <img src="anh2.jpg">
+      <img src="anh3.jpg">
+    </div>
+
+    <!-- Popup nhập mật khẩu -->
+    <div id="popup">
+      <img src="anh_avatar.jpg" alt="Ảnh đại diện">
+      <p>Nhập mật khẩu để mở bất ngờ 💌</p>
+      <div id="passwordBox">
+        <input type="password" id="password" placeholder="Mật khẩu...">
+        <button onclick="checkPassword()">OK</button>
+      </div>
+      <div id="message"></div>
+    </div>
+
+    <!-- Trái tim -->
+    <div id="heart">❤️</div>
+
+    <!-- Lá thư -->
+    <div id="letter">
+      <h2>Gửi đến bạn 💕</h2>
+      <p>
+        Chúc bạn luôn hạnh phúc, may mắn và bình an.  
+        Mỗi ngày đều tràn đầy niềm vui và nụ cười.  
+        Mong rằng những điều tốt đẹp nhất sẽ luôn đến bên bạn.  
+        💖💖💖
+      </p>
+    </div>
+  </div>
+
+  <script>
+    // Link của chính file này nhưng thêm ?view=secret
+    let url = window.location.href.split("?")[0] + "?view=secret";
+
+    // Nếu là chế độ QR
+    if (!window.location.search.includes("view=secret")) {
+      document.getElementById("qrScreen").style.display = "flex";
+      document.getElementById("secretScreen").style.display = "none";
+      new QRCode(document.getElementById("qrcode"), {
+        text: url,
+        width: 200,
+        height: 200
+      });
+    } 
+    // Nếu mở bằng QR (chế độ bí mật)
+    else {
+      document.getElementById("qrScreen").style.display = "none";
+      document.getElementById("secretScreen").style.display = "block";
+    }
+
+    function checkPassword() {
+      let pass = document.getElementById("password").value;
+      if (pass === "2609") {
+        document.getElementById("popup").style.display = "none";
+        document.getElementById("heart").style.display = "block";
+      } else {
+        document.getElementById("message").innerText = "❌ Sai mật khẩu!";
+      }
+    }
+
+    document.getElementById("heart").addEventListener("click", function() {
+      document.getElementById("heart").style.display = "none";
+      document.getElementById("letter").style.display = "block";
+    });
+  </script>
+</body>
+</html>
