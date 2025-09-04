@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Bất ngờ 💌</title>
+  <title>Bất ngờ cho em nè 💌</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <style>
     body {
@@ -11,6 +11,7 @@
       background: #111;
       color: white;
       text-align: center;
+      overflow-x: hidden;
     }
 
     /* Màn QR */
@@ -42,16 +43,18 @@
       position: absolute;
       opacity: 0;
       animation: slide 30s infinite;
+      transform: scale(1);
     }
     .slideshow img:nth-child(1) { animation-delay: 0s; }
     .slideshow img:nth-child(2) { animation-delay: 10s; }
     .slideshow img:nth-child(3) { animation-delay: 20s; }
+
     @keyframes slide {
-      0% {opacity: 0;}
-      10% {opacity: 1;}
-      30% {opacity: 1;}
-      40% {opacity: 0;}
-      100% {opacity: 0;}
+      0%   { opacity: 0; transform: scale(1);}
+      10%  { opacity: 1; transform: scale(1.05);}
+      30%  { opacity: 1; transform: scale(1.1);}
+      40%  { opacity: 0; transform: scale(1.1);}
+      100% { opacity: 0; transform: scale(1);}
     }
 
     /* Popup mật khẩu */
@@ -137,7 +140,7 @@
       color: red;
       cursor: pointer;
       animation: beat 1s infinite;
-      text-shadow: 0 0 20px rgba(255,0,0,0.6);
+      text-shadow: 0 0 20px rgba(0,0,0,0.6);
       margin-top: 100px;
     }
     @keyframes beat {
@@ -145,26 +148,95 @@
       50% { transform: scale(1.2); }
     }
 
-    /* Lá thư */
-    #letter {
+    /* Phong bì + Lá thư */
+    #envelope {
       display: none;
+      position: relative;
+      width: 320px;
+      height: 200px;
+      margin: 50px auto;
+      perspective: 1000px;
+    }
+    .envelope-body {
+      width: 100%;
+      height: 100%;
+      background: #ff69b4;
+      border-radius: 0 0 10px 10px;
+      position: absolute;
+      bottom: 0;
+      z-index: 1;
+    }
+    .envelope-flap {
+      width: 0;
+      height: 0;
+      border-left: 160px solid transparent;
+      border-right: 160px solid transparent;
+      border-bottom: 100px solid #ff1493;
+      position: absolute;
+      top: 0;
+      left: 0;
+      transform-origin: top;
+      transition: transform 1s ease;
+      z-index: 2;
+    }
+    .letter {
+      position: absolute;
+      top: 20px;
+      left: 10px;
+      right: 10px;
+      bottom: 10px;
       background: white;
       color: black;
-      padding: 20px;
-      border-radius: 12px;
-      max-width: 600px;
-      margin: 40px auto;
-      font-size: 18px;
-      line-height: 1.6;
+      border-radius: 6px;
+      padding: 15px;
+      font-size: 16px;
       text-align: left;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+      line-height: 1.6;
+      transform: translateY(100%);
+      transition: transform 1s ease;
+      z-index: 0;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+    #envelope.open .envelope-flap {
+      transform: rotateX(180deg);
+    }
+    #envelope.open .letter {
+      transform: translateY(0);
+    }
+
+    /* Sticker cute */
+    .sticker {
+      position: fixed;
+      z-index: 1000;
+      width: 80px;
+      height: 80px;
+      opacity: 0.9;
+      animation: floaty 5s infinite ease-in-out;
+    }
+    .sticker img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+    .sticker.cat { top: 10px; left: 10px; }
+    .sticker.bear { bottom: 10px; right: 10px; animation-delay: 2s; }
+    .sticker.rabbit { top: 50%; left: 10px; transform: translateY(-50%); animation-delay: 1s; }
+
+    @keyframes floaty {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
     }
   </style>
 </head>
 <body>
+  <!-- Stickers -->
+  <div class="sticker cat"><img src="https://cdn-icons-png.flaticon.com/512/616/616408.png"></div>
+  <div class="sticker bear"><img src="https://cdn-icons-png.flaticon.com/512/616/616430.png"></div>
+  <div class="sticker rabbit"><img src="https://cdn-icons-png.flaticon.com/512/616/616408.png"></div>
+
   <!-- Màn hình QR -->
   <div id="qrScreen">
-    <h2>Quét mã QR để nhận bất ngờ 💌</h2>
+    <h2>Quét mã QR để nhận bất ngờ nha 💌</h2>
     <div id="qrcode"></div>
   </div>
 
@@ -179,7 +251,7 @@
     <!-- Popup nhập mật khẩu -->
     <div id="popup">
       <img src="GVfGp0daMAMfbF9.jpg" alt="Ảnh đại diện">
-      <p>Nhập mật khẩu để mở bất ngờ 💌</p>
+      <p>Mật khẩu chính là ngày sinh của em á 💌</p>
       <div id="passwordBox">
         <div class="display">
           <input type="password" id="password" readonly>
@@ -198,15 +270,19 @@
     <!-- Trái tim -->
     <div id="heart">❤️</div>
 
-    <!-- Lá thư -->
-    <div id="letter">
-      <h2>Gửi đến bạn 💕</h2>
-      <p>
-        Chúc bạn luôn hạnh phúc, may mắn và bình an.  
-        Mỗi ngày đều tràn đầy niềm vui và nụ cười.  
-        Mong rằng những điều tốt đẹp nhất sẽ luôn đến bên bạn.  
-        💖💖💖
-      </p>
+    <!-- Phong bì + Lá thư -->
+    <div id="envelope">
+      <div class="envelope-flap"></div>
+      <div class="envelope-body"></div>
+      <div class="letter">
+        <h2>Gửi đến bạn 💕</h2>
+        <p>
+          Chúc bạn luôn hạnh phúc, may mắn và bình an.  
+          Mỗi ngày đều tràn đầy niềm vui và nụ cười.  
+          Mong rằng những điều tốt đẹp nhất sẽ luôn đến bên bạn.  
+          💖💖💖
+        </p>
+      </div>
     </div>
   </div>
 
@@ -236,7 +312,7 @@
         document.getElementById("popup").style.display = "none";
         document.getElementById("heart").style.display = "block";
       } else {
-        document.getElementById("message").innerText = "❌ Sai mật khẩu!";
+        document.getElementById("message").innerText = "❌ Sai mất rùi, em nhập lại nha!";
       }
     }
 
@@ -265,10 +341,41 @@
       }
     });
 
-    // Trái tim mở thư
+    // Ctrl + phím (A, C, X, V, Z)
+    const passInput = document.getElementById("password");
+    let clipboard = "";
+    document.addEventListener("keydown", e => {
+      if (e.ctrlKey && e.key.toLowerCase() === "a") {
+        e.preventDefault();
+        passInput.select();
+      }
+      if (e.ctrlKey && e.key.toLowerCase() === "c") {
+        e.preventDefault();
+        clipboard = passInput.value;
+      }
+      if (e.ctrlKey && e.key.toLowerCase() === "x") {
+        e.preventDefault();
+        clipboard = passInput.value;
+        passInput.value = "";
+      }
+      if (e.ctrlKey && e.key.toLowerCase() === "v") {
+        e.preventDefault();
+        passInput.value += clipboard;
+      }
+      if (e.ctrlKey && e.key.toLowerCase() === "z") {
+        e.preventDefault();
+        passInput.value = passInput.value.slice(0, -1);
+      }
+    });
+
+    // Trái tim mở phong bì
     document.getElementById("heart").addEventListener("click", function() {
       document.getElementById("heart").style.display = "none";
-      document.getElementById("letter").style.display = "block";
+      const envelope = document.getElementById("envelope");
+      envelope.style.display = "block";
+      setTimeout(() => {
+        envelope.classList.add("open");
+      }, 200);
     });
   </script>
 </body>
