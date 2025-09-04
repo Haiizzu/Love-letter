@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Bất ngờ 💌</title>
+  <title>Bất ngờ cho em nè 💌</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <style>
     body {
@@ -144,10 +144,21 @@
       <img src="GVfGp0daMAMfbF9.jpg" alt="Ảnh đại diện">
       <p>Nhập mật khẩu để mở bất ngờ 💌</p>
       <div id="passwordBox">
-        <input type="password" id="password" placeholder="Mật khẩu...">
-        <button onclick="checkPassword()">OK</button>
+        <div id="display"></div>
+        <div id="Keypad">
+          <button onclick="pressNum('1')">1</button>
+          <button onclick="pressNum('2')">2</button>
+          <button onclick="pressNum('3')">3</button><br>
+          <button onclick="pressNum('4')">4</button>
+          <button onclick="pressNum('5')">5</button>
+          <button onclick="pressNum('6')">6</button><br>
+          <button onclick="pressNum('7')">7</button>
+          <button onclick="pressNum('8')">8</button>
+          <button onclick="pressNum('9')">9</button><br>
+          <button onclick="pressNum('0')">0</button>
+          <button onclick="clearNum()">⌫</button>
+          <button onclick="checkPassword()">OK</button>
       </div>
-      <div id="message"></div>
     </div>
 
     <!-- Trái tim -->
