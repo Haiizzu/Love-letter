@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Bất ngờ cho em nè 💌</title>
+  <title>Bất ngờ 💌</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <style>
     body {
@@ -71,23 +71,45 @@
       border-radius: 15px;
       margin-bottom: 20px;
     }
-    #passwordBox input {
-      padding: 8px;
+
+    /* Ô hiển thị mật khẩu */
+    #passwordDisplay {
+      width: 160px;
+      height: 40px;
+      background: white;
+      color: black;
+      font-size: 20px;
       border-radius: 6px;
-      border: none;
-      outline: none;
-      font-size: 16px;
+      margin-bottom: 15px;
+      text-align: left;
+      padding: 5px 10px;
+      letter-spacing: 5px;
+      overflow: hidden;
     }
-    #passwordBox button {
-      padding: 8px 14px;
-      margin-left: 8px;
+
+    /* Bàn phím số */
+    .keypad {
+      display: grid;
+      grid-template-columns: repeat(3, 60px);
+      grid-gap: 10px;
+      justify-content: center;
+    }
+    .keypad button {
+      font-size: 20px;
+      padding: 15px;
       border: none;
-      border-radius: 6px;
+      border-radius: 8px;
       background: #ff69b4;
       color: white;
-      font-size: 16px;
       cursor: pointer;
     }
+    .keypad button:active {
+      background: #ff1493;
+    }
+    .key-wide {
+      grid-column: span 1;
+    }
+
     #message {
       margin-top: 10px;
       font-weight: bold;
@@ -143,22 +165,27 @@
     <div id="popup">
       <img src="GVfGp0daMAMfbF9.jpg" alt="Ảnh đại diện">
       <p>Nhập mật khẩu để mở bất ngờ 💌</p>
-      <div id="passwordBox">
-        <div id="display"></div>
-        <div id="Keypad">
-          <button onclick="pressNum('1')">1</button>
-          <button onclick="pressNum('2')">2</button>
-          <button onclick="pressNum('3')">3</button><br>
-          <button onclick="pressNum('4')">4</button>
-          <button onclick="pressNum('5')">5</button>
-          <button onclick="pressNum('6')">6</button><br>
-          <button onclick="pressNum('7')">7</button>
-          <button onclick="pressNum('8')">8</button>
-          <button onclick="pressNum('9')">9</button><br>
-          <button onclick="pressNum('0')">0</button>
-          <button onclick="clearNum()">⌫</button>
-          <button onclick="checkPassword()">OK</button>
+
+      <!-- Ô hiển thị -->
+      <div id="passwordDisplay"></div>
+
+      <!-- Bàn phím số -->
+      <div class="keypad">
+        <button onclick="pressNum('1')">1</button>
+        <button onclick="pressNum('2')">2</button>
+        <button onclick="pressNum('3')">3</button>
+        <button onclick="pressNum('4')">4</button>
+        <button onclick="pressNum('5')">5</button>
+        <button onclick="pressNum('6')">6</button>
+        <button onclick="pressNum('7')">7</button>
+        <button onclick="pressNum('8')">8</button>
+        <button onclick="pressNum('9')">9</button>
+        <button onclick="pressDel()">⌫</button>
+        <button onclick="pressNum('0')">0</button>
+        <button onclick="checkPassword()">OK</button>
       </div>
+
+      <div id="message"></div>
     </div>
 
     <!-- Trái tim -->
@@ -177,10 +204,11 @@
   </div>
 
   <script>
-    // Link của chính file này nhưng thêm ?view=secret
+    let enteredPass = "";
+
+    // Link QR
     let url = window.location.href.split("?")[0] + "?view=secret";
 
-    // Nếu là chế độ QR
     if (!window.location.search.includes("view=secret")) {
       document.getElementById("qrScreen").style.display = "flex";
       document.getElementById("secretScreen").style.display = "none";
@@ -189,22 +217,40 @@
         width: 200,
         height: 200
       });
-    } 
-    // Nếu mở bằng QR (chế độ bí mật)
-    else {
+    } else {
       document.getElementById("qrScreen").style.display = "none";
       document.getElementById("secretScreen").style.display = "block";
     }
 
+    function pressNum(num) {
+      enteredPass += num;
+      document.getElementById("passwordDisplay").innerText = "*".repeat(enteredPass.length);
+    }
+
+    function pressDel() {
+      enteredPass = enteredPass.slice(0, -1);
+      document.getElementById("passwordDisplay").innerText = "*".repeat(enteredPass.length);
+    }
+
     function checkPassword() {
-      let pass = document.getElementById("password").value;
-      if (pass === "2609") {
+      if (enteredPass === "2609") {
         document.getElementById("popup").style.display = "none";
         document.getElementById("heart").style.display = "block";
       } else {
         document.getElementById("message").innerText = "❌ Sai mật khẩu!";
       }
     }
+
+    // Trường hợp nhập trên máy tính
+    document.addEventListener("keydown", function(e) {
+      if (e.key >= "0" && e.key <= "9") {
+        pressNum(e.key);
+      } else if (e.key === "Backspace") {
+        pressDel();
+      } else if (e.key === "Enter") {
+        checkPassword();
+      }
+    });
 
     document.getElementById("heart").addEventListener("click", function() {
       document.getElementById("heart").style.display = "none";
