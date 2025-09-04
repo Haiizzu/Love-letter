@@ -72,42 +72,57 @@
       margin-bottom: 20px;
     }
 
-    /* Ô hiển thị mật khẩu */
-    #passwordDisplay {
+    /* Ô mật khẩu + OK */
+    #passwordBox {
+      text-align: center;
+    }
+    #passwordBox .display {
+      margin-bottom: 10px;
+    }
+    #passwordBox input {
       width: 160px;
-      height: 40px;
-      background: white;
-      color: black;
       font-size: 20px;
+      padding: 8px;
+      text-align: center;
+    }
+    #okBtn {
+      padding: 9px 16px;
+      margin-left: 6px;
+      border: none;
       border-radius: 6px;
-      margin-bottom: 15px;
-      text-align: left;
-      padding: 5px 10px;
-      letter-spacing: 5px;
-      overflow: hidden;
+      background: #ff69b4;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      transition: transform 0.1s, background 0.2s;
+    }
+    #okBtn:active {
+      transform: scale(0.9);
+      background: #ff1493;
     }
 
     /* Bàn phím số */
-    .keypad {
-      display: grid;
-      grid-template-columns: repeat(3, 60px);
-      grid-gap: 10px;
-      justify-content: center;
+    #passwordBox .keypad {
+      display: inline-block;
     }
-    .keypad button {
-      font-size: 20px;
-      padding: 15px;
+    #passwordBox .keypad button {
+      width: 50px;
+      height: 50px;
+      margin: 5px;
+      font-size: 18px;
       border: none;
-      border-radius: 8px;
-      background: #ff69b4;
-      color: white;
+      border-radius: 6px;
       cursor: pointer;
+      background: #444;
+      color: white;
+      transition: transform 0.1s, background 0.2s;
     }
-    .keypad button:active {
-      background: #ff1493;
+    #passwordBox .keypad button:active {
+      transform: scale(0.9);
+      background: #666;
     }
-    .key-wide {
-      grid-column: span 1;
+    #passwordBox .empty {
+      visibility: hidden;
     }
 
     #message {
@@ -164,27 +179,19 @@
     <!-- Popup nhập mật khẩu -->
     <div id="popup">
       <img src="GVfGp0daMAMfbF9.jpg" alt="Ảnh đại diện">
-      <p>Mật khẩu là ngày sinh của emm ... </p>
-
-      <!-- Ô hiển thị -->
-      <div id="passwordDisplay"></div>
-
-      <!-- Bàn phím số -->
-      <div class="keypad">
-        <button onclick="pressNum('1')">1</button>
-        <button onclick="pressNum('2')">2</button>
-        <button onclick="pressNum('3')">3</button>
-        <button onclick="pressNum('4')">4</button>
-        <button onclick="pressNum('5')">5</button>
-        <button onclick="pressNum('6')">6</button>
-        <button onclick="pressNum('7')">7</button>
-        <button onclick="pressNum('8')">8</button>
-        <button onclick="pressNum('9')">9</button>
-        <button onclick="checkPassword()">OK</button>
-        <button onclick="pressNum('0')">0</button>
-        <button onclick="pressDel()">⌫</button>
+      <p>Nhập mật khẩu để mở bất ngờ 💌</p>
+      <div id="passwordBox">
+        <div class="display">
+          <input type="password" id="password" readonly>
+          <button id="okBtn">OK</button>
+        </div>
+        <div class="keypad">
+          <button>1</button><button>2</button><button>3</button><br>
+          <button>4</button><button>5</button><button>6</button><br>
+          <button>7</button><button>8</button><button>9</button><br>
+          <button class="empty"></button><button>0</button><button id="del">⌫</button>
+        </div>
       </div>
-
       <div id="message"></div>
     </div>
 
@@ -204,11 +211,10 @@
   </div>
 
   <script>
-    let enteredPass = "";
-
-    // Link QR
+    // Link của chính file này nhưng thêm ?view=secret
     let url = window.location.href.split("?")[0] + "?view=secret";
 
+    // Nếu là chế độ QR
     if (!window.location.search.includes("view=secret")) {
       document.getElementById("qrScreen").style.display = "flex";
       document.getElementById("secretScreen").style.display = "none";
@@ -217,23 +223,16 @@
         width: 200,
         height: 200
       });
-    } else {
+    } 
+    // Nếu mở bằng QR (chế độ bí mật)
+    else {
       document.getElementById("qrScreen").style.display = "none";
       document.getElementById("secretScreen").style.display = "block";
     }
 
-    function pressNum(num) {
-      enteredPass += num;
-      document.getElementById("passwordDisplay").innerText = "*".repeat(enteredPass.length);
-    }
-
-    function pressDel() {
-      enteredPass = enteredPass.slice(0, -1);
-      document.getElementById("passwordDisplay").innerText = "*".repeat(enteredPass.length);
-    }
-
     function checkPassword() {
-      if (enteredPass === "2609") {
+      let pass = document.getElementById("password").value;
+      if (pass === "2609") {
         document.getElementById("popup").style.display = "none";
         document.getElementById("heart").style.display = "block";
       } else {
@@ -241,17 +240,32 @@
       }
     }
 
-    // Trường hợp nhập trên máy tính
-    document.addEventListener("keydown", function(e) {
-      if (e.key >= "0" && e.key <= "9") {
-        pressNum(e.key);
-      } else if (e.key === "Backspace") {
-        pressDel();
-      } else if (e.key === "Enter") {
-        checkPassword();
+    // Bàn phím số
+    document.querySelectorAll("#passwordBox .keypad button").forEach(btn => {
+      btn.addEventListener("click", () => {
+        if (btn.id === "del") {
+          document.getElementById("password").value =
+            document.getElementById("password").value.slice(0, -1);
+        } else if (!btn.classList.contains("empty")) {
+          document.getElementById("password").value += btn.innerText;
+        }
+      });
+    });
+
+    // Nút OK hoặc Enter
+    document.getElementById("okBtn").addEventListener("click", checkPassword);
+    document.addEventListener("keydown", e => {
+      if (e.key === "Enter") checkPassword();
+      if (!isNaN(e.key)) {
+        document.getElementById("password").value += e.key;
+      }
+      if (e.key === "Backspace") {
+        document.getElementById("password").value =
+          document.getElementById("password").value.slice(0, -1);
       }
     });
 
+    // Trái tim mở thư
     document.getElementById("heart").addEventListener("click", function() {
       document.getElementById("heart").style.display = "none";
       document.getElementById("letter").style.display = "block";
